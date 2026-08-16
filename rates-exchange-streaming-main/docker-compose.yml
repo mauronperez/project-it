@@ -129,8 +129,48 @@ services:
       - postgres
     volumes:
     - grafana_data:/var/lib/grafana
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
 
+  kafka-mongodb-consumer:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: bitcoin-mongodb-consumer
+    depends_on:
+      - kafka
+      - mongodb
+    restart: always
+    environment:
+      - KAFKA_BROKER=kafka:9092
+      - MONGO_HOST=mongodb
+      - MONGO_PORT=27017
+      - MONGO_DB=bitcoin
+      - MONGO_COLLECTION=prices
+    command: ["python", "/app/btc_rates_mongodb_consumer.py"]
+    volumes:
+      - ./app:/app
+
+  mongo-express:
+    image: mongo-express:latest
+    container_name: mongo-express
+    depends_on:
+      - mongodb
+    ports:
+      - "8082:8081"
+    environment:
+      ME_CONFIG_MONGODB_SERVER: mongodb
+      ME_CONFIG_MONGODB_PORT: 27017
+      ME_CONFIG_BASICAUTH_USERNAME: admin
+      ME_CONFIG_BASICAUTH_PASSWORD: admin123
+      
 volumes:
   minio_data:
   postgres_data:
   grafana_data:
+  mongodb_data:

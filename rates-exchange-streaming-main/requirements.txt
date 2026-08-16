@@ -2,3 +2,4 @@ requests
 confluent-kafka
 boto3
 psycopg2-binary
+pymongo
