@@ -1,4 +1,3 @@
-```yaml
 name: CI - Project IT
 
 on:
@@ -77,4 +76,3 @@ jobs:
       - name: Build Docker Compose images
         working-directory: ${{ matrix.directory }}
         run: docker compose build
-```
