@@ -13,6 +13,7 @@ jobs:
   # Validate every Docker Compose file
   # ---------------------------------------------------------
   validate-compose:
+
     name: Validate - ${{ matrix.name }}
     runs-on: ubuntu-latest
 
@@ -39,8 +40,23 @@ jobs:
             compose_file: airflow-main/docker-compose.yml
 
     steps:
+
       - name: Checkout
         uses: actions/checkout@v4
+
+      # Airflow expects a .env file that is not committed to Git
+      - name: Create Airflow CI environment
+        if: matrix.name == 'Airflow'
+        working-directory: airflow-main
+        run: |
+          cat > .env <<EOF
+          AIRFLOW_UID=50000
+          AIRFLOW_IMAGE_NAME=apache/airflow:3.1.7
+          AIRFLOW__CORE__FERNET_KEY=dIMIk8EN7uRIqccKhHiOTztouWNrt4fmH1m__ADF=
+          AIRFLOW__API__SECRET_KEY=ci-test-secret
+          SMTP_USER=
+          SMTP_PASSWORD=
+          EOF
 
       - name: Validate Docker Compose
         run: docker compose -f ${{ matrix.compose_file }} config
@@ -50,6 +66,7 @@ jobs:
   # Build custom Docker images
   # ---------------------------------------------------------
   build-images:
+
     name: Build - ${{ matrix.name }}
     runs-on: ubuntu-latest
 
@@ -70,6 +87,7 @@ jobs:
             directory: docker-postgres
 
     steps:
+
       - name: Checkout
         uses: actions/checkout@v4
 

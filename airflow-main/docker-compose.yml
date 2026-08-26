@@ -457,7 +457,7 @@ services:
           warning_resources="true"
         fi
 
-        if [[ ${warning_resources} == "true" ]]; then
+        if [[ $${warning_resources} == "true" ]]; then
           echo
           echo -e "\033[1;33mWARNING!!!: You may not have enough resources to run Airflow.\e[0m"
           echo
