@@ -1,0 +1,80 @@
+```yaml
+name: CI - Project IT
+
+on:
+  pull_request:
+    branches: [main]
+
+  push:
+    branches: [main]
+
+jobs:
+
+  # ---------------------------------------------------------
+  # Validate every Docker Compose file
+  # ---------------------------------------------------------
+  validate-compose:
+    name: Validate - ${{ matrix.name }}
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: Root
+            compose_file: docker-compose.yml
+
+          - name: Docker Postgres
+            compose_file: docker-postgres/docker-compose.yml
+
+          - name: Mini Data Lake
+            compose_file: docker-mini-dl/docker-compose.yml
+
+          - name: Exchange Streaming
+            compose_file: rates-exchange-streaming-main/docker-compose.yml
+
+          - name: Hadoop Local
+            compose_file: hadoop-local-main/docker-compose.yml
+
+          - name: Airflow
+            compose_file: airflow-main/docker-compose.yml
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate Docker Compose
+        run: docker compose -f ${{ matrix.compose_file }} config
+
+
+  # ---------------------------------------------------------
+  # Build custom Docker images
+  # ---------------------------------------------------------
+  build-images:
+    name: Build - ${{ matrix.name }}
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: Mini Data Lake
+            directory: docker-mini-dl
+
+          - name: Exchange Streaming
+            directory: rates-exchange-streaming-main
+
+          - name: Hadoop Local
+            directory: hadoop-local-main
+
+          - name: Docker Postgres
+            directory: docker-postgres
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build Docker Compose images
+        working-directory: ${{ matrix.directory }}
+        run: docker compose build
+```
