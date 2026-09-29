@@ -1,49 +1,44 @@
 """
-Extract + Load: trae standings del Mundial 2022 desde API-Football
-e inserta en la tabla "standings" de tu Postgres (el que levantaste
-con docker-compose).
+Extract + Load: lee los standings del Mundial 2022 desde el archivo local
+data-wc-2022.json e inserta en la tabla "standings" de tu Postgres
+(el que levantaste con docker-compose).
 
 
 Correr con:
-    python extract-data.py
+    python extract.py
 
 Requisito: tu contenedor de Postgres debe estar corriendo
-(docker compose up -d) antes de ejecutar este script.
+(docker compose up -d) antes de ejecutar este script, y el archivo
+data-wc-2022.json debe estar en la misma carpeta.
 """
 
-import requests
-import psycopg2
+import json
 import os
+
+import psycopg2
 from dotenv import load_dotenv
+
 load_dotenv()
 
-API_FOOTBALL_KEY = os.getenv("API_FOOTBALL_KEY")
-LEAGUE_ID = 1        # 1 = World Cup
-SEASON = 2022    
+JSON_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data-wc-2022.json")
 
-API_URL = "https://v3.football.api-sports.io/standings"
-
-# Mismos datos que en tu docker-compose.yml
+# Mismas variables que usa tu docker-compose.yml (archivo .env)
 PG_CONFIG = {
-    "host": "localhost",     
+    "host": "localhost",
     "port": 5432,
-    "dbname": "wc_standings",
-    "user": "db_user",
-    "password": "db_password",
+    "dbname": os.getenv("POSTGRES_DB"),
+    "user": os.getenv("POSTGRES_USER"),
+    "password": os.getenv("POSTGRES_PASSWORD"),
 }
 
 
-def extract_standings(league_id: int, season: int) -> list[dict]:
-    """Pega a la API y devuelve una lista de filas: pais, puntos, mundial, grupo."""
-    headers = {"x-apisports-key": API_FOOTBALL_KEY}
-    params = {"league": league_id, "season": season}
-
-    response = requests.get(API_URL, headers=headers, params=params)
-    response.raise_for_status()
-    data = response.json()
+def extract_standings(json_path: str) -> list[dict]:
+    """Lee el JSON y devuelve una lista de filas: pais, puntos, mundial, grupo."""
+    with open(json_path, encoding="utf-8") as f:
+        data = json.load(f)
 
     if data.get("errors"):
-        raise RuntimeError(f"La API devolvió errores: {data['errors']}")
+        raise RuntimeError(f"El JSON contiene errores: {data['errors']}")
 
     rows = []
     for standings_response in data["response"]:
@@ -86,8 +81,8 @@ def load_to_postgres(rows: list[dict]) -> None:
 
 
 if __name__ == "__main__":
-    print("Extrayendo datos de la API...")
-    rows = extract_standings(LEAGUE_ID, SEASON)
+    print(f"Leyendo datos de {JSON_PATH}...")
+    rows = extract_standings(JSON_PATH)
     print(f"Se extrajeron {len(rows)} filas.")
 
     print("Insertando en Postgres...")
