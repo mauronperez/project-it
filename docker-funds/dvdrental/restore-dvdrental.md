@@ -1,9 +1,9 @@
 # Restaurar la base de datos `dvdrental` en un contenedor Docker con PostgreSQL
 
 Esta guía asume que:
-- Tenés un contenedor Docker corriendo PostgreSQL llamado **`postgres_container`**.
+
+- Tenés un contenedor Docker corriendo PostgreSQL llamado `pg-test`.
 - Ya descomprimiste `dvdrental.zip` y tenés una carpeta con `toc.dat`, varios archivos `.dat` numerados y `restore.sql`.
-- Estás en la terminal de tu Mac (host), no dentro del contenedor.
 
 ---
 
@@ -12,25 +12,30 @@ Esta guía asume que:
 Reemplazá la ruta de origen por la tuya. Si el path tiene espacios, ponelo entre comillas dobles.
 
 ```bash
-docker cp "/ruta/a/tu/carpeta/dvdrental" postgres_container:/tmp/dvdrental_restore
+docker cp "/ruta/a/tu/carpeta/dvdrental" pg-test:/tmp/dvdrental_restore
 ```
 
 **Ejemplo real:**
+
 ```bash
-docker cp "/Users/mauroperez/Desktop/***"/dvdrental" postgres_container:/tmp/dvdrental_restore
+docker cp "/Users/mauroperez/Desktop/***"/dvdrental" pg-test:/tmp/dvdrental_restore
 ```
 
 ---
 
+
+
 ## 2. Entrar al contenedor
 
 ```bash
-docker exec -it postgres_container bash
+docker exec -it pg-test bash
 ```
 
 A partir de acá, todos los comandos se ejecutan **dentro** del contenedor.
 
 ---
+
+
 
 ## 3. Verificar que los archivos llegaron bien
 
@@ -42,15 +47,17 @@ Deberías ver `toc.dat`, varios archivos `NNNN.dat` y `restore.sql`.
 
 ---
 
+
+
 ## 4. Crear la base de datos destino
 
 ```bash
 psql -U postgres -d  -c "CREATE DATABASE dvdrental;"
 ```
 
-> Si ya la habías creado antes desde DBeaver, este comando va a tirar un error de "already exists" — no pasa nada, es esperable.
-
 ---
+
+
 
 ## 5. Ejecutar la restauración
 
@@ -62,20 +69,23 @@ Vas a ver un montón de líneas de log (creación de esquema, tablas, secuencias
 
 ---
 
+
+
 ## 6. Salir del contenedor y limpiar los archivos temporales
 
 ```bash
 exit
 ```
 
-
 ```bash
-docker exec postgres_container rm -rf /tmp/dvdrental_restore
+docker exec pg-test rm -rf /tmp/dvdrental_restore
 ```
 
 Este paso es opcional, pero es buena práctica no dejar basura acumulada dentro del contenedor.
 
 ---
+
+
 
 ## 7. Verificar en DBeaver
 
@@ -85,12 +95,14 @@ Este paso es opcional, pero es buena práctica no dejar basura acumulada dentro 
 
 ---
 
+
+
 ## Resumen rápido (todos los comandos juntos)
 
 ```bash
 
-docker cp "/ruta/a/tu/carpeta/dvdrental" postgres_container:/tmp/dvdrental_restore
-docker exec -it postgres_container bash
+docker cp "/ruta/a/tu/carpeta/dvdrental" pg-test:/tmp/dvdrental_restore
+docker exec -it pg-test bash
 
 # Dentro del contenedor
 ls /tmp/dvdrental_restore
@@ -99,5 +111,6 @@ pg_restore -U postgres -d dvdrental -v --no-owner --no-privileges /tmp/dvdrental
 exit
 
 
-docker exec postgres_container rm -rf /tmp/dvdrental_restore
+docker exec pg-test rm -rf /tmp/dvdrental_restore
 ```
+
