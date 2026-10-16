@@ -3,13 +3,14 @@ from pathlib import Path
 from datetime import datetime
 from sqlalchemy import create_engine
 from transform_data import get_dataframes, DATA_DIR
+import os
 
 DB_CONFIG = {
     'host': 'db',
     'port': 5432,
-    'database': 'playground',
-    'user': 'postgres',
-    'password': 'test123'
+    "database": os.getenv("POSTGRES_DB"),
+    "user": os.getenv("POSTGRES_USER"),
+    "password": os.getenv("POSTGRES_PASSWORD"),
 }
 
 PROCESSED_DIR = DATA_DIR / "processed"

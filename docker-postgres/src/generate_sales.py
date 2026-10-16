@@ -2,8 +2,10 @@ import csv
 import random
 from datetime import date, timedelta
 from pathlib import Path
+import os
 
-DATA_DIR = Path(__file__).parent / "data"
+
+DATA_DIR = Path(os.environ.get("DATA_DIR", Path(__file__).parent.parent / "data"))
 
 
 def generate_sales(

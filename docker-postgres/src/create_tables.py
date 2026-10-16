@@ -1,12 +1,13 @@
 import psycopg2
 from pathlib import Path
+import os
 
 DB_CONFIG = {
     'host': 'db',
     'port': 5432,
-    'database': 'playground',
-    'user': 'postgres',
-    'password': 'test123'
+    "database": os.getenv("POSTGRES_DB"),
+    "user": os.getenv("POSTGRES_USER"),
+    "password": os.getenv("POSTGRES_PASSWORD"),
 }
 
 SQL_SCRIPTS = [
