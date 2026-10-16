@@ -10,3 +10,4 @@ dbt/logs/
 airflow/logs/
 airflow/data/
 .DS_Store
+docker-funds/postgres/
