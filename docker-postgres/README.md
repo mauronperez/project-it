@@ -96,7 +96,7 @@ Para borrar todo y repetir la demostración limpia:
 # 1. Parar y eliminar los contenedores y la red
 docker compose down
 
-# 2. Borrar los datos de PostgreSQL (la base vuelve a quedar vacía)
+# 2. Borrar los datos de PostgreSQL
 rm -rf postgres/data
 
 # 3. Dejar los CSV en su estado inicial
