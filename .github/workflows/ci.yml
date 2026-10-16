@@ -21,8 +21,8 @@ jobs:
       fail-fast: false
       matrix:
         include:
-
-           - name: Docker Funds
+        
+          - name: Docker Funds
             compose_file: docker-funds/docker-compose.yml
 
           - name: Docker Postgres
