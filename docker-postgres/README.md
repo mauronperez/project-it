@@ -16,6 +16,8 @@ Proyecto de práctica: extrae datos de ficheros CSV, los transforma con pandas y
         generador de ventas ficticias (para la carga incremental)
 ```
 
+
+
 ## Estructura del proyecto
 
 ```
@@ -34,6 +36,7 @@ Proyecto de práctica: extrae datos de ficheros CSV, los transforma con pandas y
 ```
 
 
+
 ## Puesta en marcha
 
 1. Crea un fichero `.env` en la raíz con las credenciales de la base de datos:
@@ -46,7 +49,7 @@ POSTGRES_DB=cambiar_esta_clave
 EOF
 ```
 
-2. Levanta los contenedores:
+1. Levanta los contenedores:
 
 ```bash
 docker compose up -d --build
@@ -70,6 +73,8 @@ docker compose exec src python generate_sales.py    # TODO: nombre real
 
 
 ```
+
+
 
 ## Comprobar el resultado
 
@@ -95,9 +100,9 @@ docker compose down
 rm -rf postgres/data
 
 # 3. Dejar los CSV en su estado inicial
-#    Si la carga mueve los ficheros a data/processed/, devuélvelos a data/
 mv data/processed/* data/ 2>/dev/null
 
 # 4. Volver a levantar
 docker compose up -d --build
 ```
+
