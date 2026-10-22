@@ -1,0 +1,18 @@
+version: 2
+
+models:
+  - name: silver_crimes
+    columns:
+      - name: crime_id
+        tests:
+          - unique
+          - not_null
+      - name: occurred_at
+        tests:
+          - not_null
+  - name: silver_crimes_type
+    columns:
+      - name: iucr
+        tests:
+          - unique
+          - not_null

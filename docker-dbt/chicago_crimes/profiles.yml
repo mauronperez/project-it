@@ -1,0 +1,6 @@
+chicago_crimes:
+  target: dev
+  outputs:
+    dev:
+      type: duckdb
+      path: '../data/chicago_crimes.db'

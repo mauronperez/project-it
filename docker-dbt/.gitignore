@@ -1,0 +1,7 @@
+*.db
+*.db.wal
+target/
+logs/
+dbt_packages/
+.venv/
+.env

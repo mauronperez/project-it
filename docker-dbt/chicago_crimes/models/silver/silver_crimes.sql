@@ -1,0 +1,20 @@
+select
+    "ID"                    as crime_id,
+    "Case Number"           as case_number,
+    "Date"                  as occurred_at,
+    "Block"                 as block,
+    "IUCR"                  as iucr,
+    "Primary Type"          as primary_type,
+    "Description"           as description,
+    "Location Description"  as location_description,
+    "Arrest"                as is_arrest,
+    "Domestic"              as is_domestic,
+    "Beat"                  as beat,
+    "District"              as district,
+    "Ward"                  as ward,
+    "Community Area"        as community_area,
+    "FBI Code"              as fbi_code,
+    "Latitude"              as latitude,
+    "Longitude"             as longitude,
+    "Updated On"            as updated_on
+from {{ source('raw', 'chicago_crimes') }}

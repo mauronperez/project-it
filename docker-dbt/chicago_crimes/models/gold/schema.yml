@@ -1,0 +1,9 @@
+version: 2
+
+models:
+  - name: gold_crimes_by_district
+    columns:
+      - name: district
+        tests:
+          - unique
+          - not_null

@@ -1,0 +1,14 @@
+version: 2
+
+sources:
+  - name: raw
+    schema: main
+    tables:
+      - name: chicago_crimes
+        description: "Crímenes de Chicago 2026, cargados desde el CSV original."
+        columns:
+          - name: ID
+            quote: true
+            tests:
+              - unique
+              - not_null

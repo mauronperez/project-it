@@ -1,0 +1,22 @@
+services:
+  dbt:
+    build: .
+    volumes:
+      - .:/workspace
+    working_dir: /workspace/chicago_crimes
+    environment:
+      DBT_PROFILES_DIR: /workspace/chicago_crimes
+    ports:
+      - "8888:8888"   # notebook
+      - "8080:8080"   # dbt docs
+    stdin_open: true
+    tty: true
+
+  streamlit:
+    build: .
+    volumes:
+      - .:/workspace
+    working_dir: /workspace/streamlit_app
+    ports:
+      - "8501:8501"
+    command: streamlit run app.py --server.address 0.0.0.0 --server.port 8501
