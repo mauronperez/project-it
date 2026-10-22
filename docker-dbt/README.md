@@ -180,31 +180,18 @@ curl -L -o data/raw/crimes_2026.csv \
 
 ### 4.2 Cargar el CSV en DuckDB
 
-`scripts/load_raw.py`:
-
 ```python
 import duckdb
 
-CSV = "/workspace/data/raw/crimes_2026.csv"
-DB = "/workspace/data/chicago_crimes.db"
+CSV = "data/raw/chicago_crimes_2026.csv"
 
-with duckdb.connect(DB) as con:
+with duckdb.connect("data/chicago_crimes.db") as con:
     con.sql(f"""
         create or replace table chicago_crimes as
         select *
-        from read_csv('{CSV}', header = true,
-                      types = {{'Beat': 'VARCHAR', 'District': 'VARCHAR',
-                               'IUCR': 'VARCHAR', 'FBI Code': 'VARCHAR'}})
+        from read_csv_auto('{CSV}', header = true)
     """)
-    con.sql("select count(*) as filas from chicago_crimes").show()
-```
-
-Los `types` fuerzan texto en `Beat`, `District`, `IUCR` y `FBI Code`. Sin eso, DuckDB los convertiría en números y se perderían los ceros a la izquierda (`019` pasaría a `19`).
-
-Ejecútalo:
-
-```bash
-docker compose exec dbt python /workspace/scripts/load_raw.py
+    con.sql("select * as filas from chicago_crimes").show()
 ```
 
 
