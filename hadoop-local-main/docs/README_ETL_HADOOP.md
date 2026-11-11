@@ -32,8 +32,6 @@ tu-proyecto/
     └── Venta_incremental.csv
 ```
 
-
-
 ## 1. Levantar el cluster de hadoop
 
 ```bash
@@ -48,8 +46,6 @@ start-dfs.sh
 start-yarn.sh
 ```
 
-
-
 ## 2. Subir Venta.csv a HDFS
 
 ```bash
@@ -57,8 +53,6 @@ hdfs dfs -mkdir -p /user/data
 hdfs dfs -put /data/Venta_incremental.csv /user/data/Venta_incremental.csv
 hdfs dfs -ls /user/data
 ```
-
-
 
 ## 3. Correr el job de Hadoop Streaming
 
@@ -82,15 +76,12 @@ scripts junto con el job — eso es justo lo que hace `-file`.
 hdfs dfs -cat /user/data/output_ventas_por_producto/part-00000 | head -20
 ```
 
-
-
 ## 5. Traer el resultado de HDFS a la carpeta compartida (`/data`)
 
 ```bash
 hdfs dfs -get /user/data/output_ventas_por_producto/part-00000 \
   /data/resultado_ventas_por_producto.tsv
 ```
-
 
 ## 6. Salir del contenedor, y cargar el resultado en Postgres
 
@@ -104,16 +95,12 @@ Con el contenedor encendido de Postgres, ejecutar:
 python load_resultado_hadoop.py
 ```
 
-
-
 ## 7. Verificar en Postgres
 
 ```bash
-docker exec -it pg-test psql -U postgres -d playground -c \
+docker exec -it pg_container psql -U postgres -d playground -c \
   "SELECT * FROM resumen_ventas_hadoop ORDER BY total_vendido DESC LIMIT 10;"
 ```
-
-
 
 ## El círculo completo
 
@@ -126,13 +113,11 @@ Postgres (venta)
     → Postgres (resumen_ventas_hadoop) -- una tabla NUEVA, resultado del cluster
 ```
 
-
-
 ## Punto de discusión para la clase
 
-````
+```
 Sería interesante probar cómo se distribuyen los recursos
 ante un incremento considerable en los registros (1M). 
 Observar el comportamiento en http://localhost:8088 para
 observar su distribución. 
-````
+```

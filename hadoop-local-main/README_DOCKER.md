@@ -50,8 +50,6 @@ tar -czvf input/odisea.tar.gz odisea.txt
 - v: Progreso del proceso.
 - f: Especificar nombre del archivo.
 
-
-
 #### 3.4 Revisar los tamaños de nuestros archivos
 
 ```
@@ -64,11 +62,7 @@ Listar los diferentes archivos llamados odisea y ver su tamaño
 find /root -name "odisea*" -exec stat -c "%n %s bytes" {} \;
 ```
 
-
-
 ## 4 Usando HDFS y DFS
-
-
 
 #### 4.1 Crear y mover directorio input al DFS de HADOOP
 
@@ -77,15 +71,11 @@ hdfs dfs -mkdir -p test
 hdfs dfs -put input
 ```
 
-
-
 #### 4.2 Revisar nuestro input directorio en HADOOP
 
 ```
 hdfs dfs -ls input
 ```
-
-
 
 #### 4.3 Opcional - Leer las primeras lineas de nuestro archivo en HADOOP
 
@@ -93,19 +83,13 @@ hdfs dfs -ls input
 hdfs dfs -cat  input/odisea.tar.gz | zcat | tail -n 20
 ```
 
-
-
 #### 4.4. Opcional -Eliminar el archivo en HADOOP
 
 ```
 hdfs dfs -rm -f /user/rawdata/example/odisea.tar.gz
 ```
 
-
-
 ## 5. Ejecutar un trabajo en HADOOP
-
-
 
 ### 5.1 Script que ejecuta el Job con la funcion Word Count
 
@@ -113,11 +97,7 @@ hdfs dfs -rm -f /user/rawdata/example/odisea.tar.gz
 hadoop jar $HADOOP_HOME/share/hadoop/mapreduce/sources/hadoop-mapreduce-examples-2.7.2-sources.jar org.apache.hadoop.examples.WordCount input output
 ```
 
-
-
 ## 6. Resultados del trabajo (JOB) en HADOOP
-
-
 
 ### 6.1 Archivos dentro del cluster
 
@@ -125,23 +105,17 @@ hadoop jar $HADOOP_HOME/share/hadoop/mapreduce/sources/hadoop-mapreduce-examples
 hdfs dfs -ls
 ```
 
-
-
 ### 6.2 Archivos en la carpeta output
 
 ```
 hdfs dfs -ls output/
 ```
 
-
-
 ### 6.3 Registros
 
 ```
 hdfs dfs -cat output/part-r-00000
 ```
-
-
 
 # 7 - Opcional: Limpiando odisea
 
@@ -162,16 +136,13 @@ hadoop jar $HADOOP_HOME/share/hadoop/mapreduce/sources/hadoop-mapreduce-examples
 hdfs dfs -cat output_clean/part-r-00000 | head -50
 ```
 
-
-
 # 8 - Opcional: Procesar Reviews
-
-
 
 ### 8.1 Agrego reviews
 
 ```
-cat > reviews.txt
+
+docker cp data/reviews.txt hadoop-master:/root/reviews.txt
 ```
 
 Pego las reviews. Enter. CTRL + C
@@ -186,23 +157,17 @@ hdfs dfs -put reviews.txt input/
 hdfs dfs -ls input/
 ```
 
-
-
 ### 8.3 Corro el Job
 
 ```
-hadoop jar $HADOOP_HOME/share/hadoop/mapreduce/sources/hadoop-mapreduce-examples-2.7.2-sources.jar org.apache.hadoop.examples.WordCount input output_reviews
+hadoop jar $HADOOP_HOME/share/hadoop/mapreduce/sources/hadoop-mapreduce-examples-2.7.2-sources.jar org.apache.hadoop.examples.WordCount input/reviews.txt  output_reviews
 ```
-
-
 
 ### 8.4 Miro el ejemplo
 
 ```
 hdfs dfs -cat output_reviews/part-r-00000 | sort -k2,2nr | head -20
 ```
-
-
 
 ## 9 - Opcional cuento solo las estrellas
 
@@ -211,8 +176,10 @@ cat reviews.txt | grep -oE '[1-5] estrellas' | awk '{print $1}' > stars.txt
 ```
 
 ```
-mkdir input_stars
-hdfs dfs -put stars.txt input_stars
+hdfs dfs -rm input_stars                # borra el archivo accidental
+hdfs dfs -mkdir -p input_stars          # crea la carpeta en HDFS
+hdfs dfs -put stars.txt input_stars/    # copia dentro
+hdfs dfs -ls input_stars
 ```
 
 ```
@@ -222,8 +189,6 @@ hadoop jar $HADOOP_HOME/share/hadoop/mapreduce/sources/hadoop-mapreduce-examples
 ```
 hdfs dfs -cat output_stars/part-r-00000 | sort -k2,2nr | head -20
 ```
-
-
 
 ## 10 - Opcional cuento quitando las preposiciones y conectores
 
